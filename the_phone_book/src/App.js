@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Persons from './components/persons'
 import FormComponent from './components/form'
 import Heading from './components/heading'
 import FormFilter from './components/formfilter'
+import axios from 'axios'
 
 const App = () => {
   const [ persons, setPersons] = useState([
     { id: 1, name: 'Arto Hellas', number: '555-555-5555'},
     { id: 2, name: 'Chris Sanders', number: '555-555-4444'}
-  ]) 
+  ])
+  const [ person, setPerson ] = useState([])
   const [ newName, setNewName ] = useState('')
-  const [newNumber, setNewNumber ] = useState('')
+  const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
 
   const handleNameAdd = (event) => setNewName(event.target.value)
@@ -18,6 +20,15 @@ const App = () => {
   const handleNumberAdd = (event) => setNewNumber(event.target.value)
 
   const handleFilterAdd = (event) => setNewFilter(event.target.value)
+
+  const hook = () => {
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => setPerson(response.data))
+  }
+
+  useEffect(hook, [])
+  console.log('render', person.length, 'persons')
   
   const addPerson = (event) => {
     event.preventDefault() // prevents rerendering
