@@ -1,7 +1,8 @@
 import React from 'react';
 
-const CountrySearch = ({ country, onClick }) => {
-    const lang = country.map(x => x.languages.map(x => <li>{x.name}</li>))
+const CountrySearch = ({ country, onClick, temperature, icon, wind}) => {
+
+    const lang = country.map(x => x.languages.map(x => <li key={x.name}>{x.name}</li>))
     const coun = country.map(x => {
         return(
         <div key={x.alpha3Code}>
@@ -11,6 +12,10 @@ const CountrySearch = ({ country, onClick }) => {
             <h2>Languages</h2>
             <ul>{lang}</ul>
             <img src={x.flag} alt='Country flag'></img>
+            <h2>Weather in {x.capital}</h2>
+            <p><b>Temperature</b>: {temperature} &#176; c</p>
+            <img src={icon} alt='weather icon'></img>
+            <p><b>Wind direction</b>: {wind}</p>
         </div>
         )
     })
