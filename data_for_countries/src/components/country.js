@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CountrySearch = ({ country }) => {
+const CountrySearch = ({ country, onClick }) => {
     const lang = country.map(x => x.languages.map(x => <li>{x.name}</li>))
     const coun = country.map(x => {
         return(
@@ -16,7 +16,15 @@ const CountrySearch = ({ country }) => {
     })
 
     if (country.length > 10) return <p>Too many matches, please specify another filter</p>
-    else if (country.length < 10 && country.length > 1) return country.map(x => <p key={x.alpha3Code}>{x.name}</p>)
+    else if (country.length < 10 && country.length > 1) return country.map(x => {
+       return(
+        <div key={x.name}>
+            <p>{x.name}</p>
+            <button value={x.name} onClick={onClick}>show {x.name}</button>
+        </div>
+        )  
+    })
+    
     else return coun
 }
 

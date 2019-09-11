@@ -22,14 +22,16 @@ function App() {
     return name
   }
 
-  const language = nameFilter().map(x => x.languages.map(x => x.name))
+  console.log(country)
 
-  console.log(language[0])
-
+  const handleClick = (event) => {
+    event.preventDefault()
+    setNewFilter(event.target.value)
+  }
   return (
     <div>
       <FormFilter handleFilterAdd={handleFilterAdd} />
-      <CountrySearch country={nameFilter()} />
+      <CountrySearch country={nameFilter()} onClick={handleClick} />
     </div>
   );
 }
