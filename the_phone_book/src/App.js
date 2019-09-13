@@ -3,14 +3,10 @@ import Persons from './components/persons'
 import FormComponent from './components/form'
 import Heading from './components/heading'
 import FormFilter from './components/formfilter'
-import axios from 'axios'
+import phoneService from './services/persons'
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { id: 1, name: 'Arto Hellas', number: '555-555-5555'},
-    { id: 2, name: 'Chris Sanders', number: '555-555-4444'}
-  ])
-  const [ person, setPerson ] = useState([])
+  const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
@@ -22,18 +18,17 @@ const App = () => {
   const handleFilterAdd = (event) => setNewFilter(event.target.value)
 
   const hook = () => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => setPerson(response.data))
+    phoneService
+    .getAll()
+    .then(response => setPersons(response.data))
   }
 
   useEffect(hook, [])
-  console.log('render', person.length, 'persons')
+  console.log('render', persons.length, 'persons')
   
   const addPerson = (event) => {
     event.preventDefault() // prevents rerendering
     const phoneObject = {
-      id: persons.length + 1,
       name: newName, // takes whatever handleNameAdd returns
       number: newNumber 
     }
@@ -44,8 +39,13 @@ const App = () => {
     // check for duplicate names
     personNames.includes(newName) 
     ? alert(`${newName} already exists!`) 
-    : setPersons(persons.concat(phoneObject)) // creates new array with new object
-    setNewName('') // resets newName to empty string 
+    : phoneService
+        .create(phoneObject)
+        .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+      })
+
   }
   // filters objects down to specified names
   const nameFilter = () => {
