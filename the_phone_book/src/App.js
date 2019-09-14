@@ -24,11 +24,13 @@ const App = () => {
   }
 
   const handleClick = (event) => {
+    if (window.confirm("Are you sure you want to delete this contact?")) {
     phoneService
     .remove(event.target.value)
+    }
   }
 
-  useEffect(hook, [ handleClick ])
+  useEffect(hook, [handleClick])
   
   const addPerson = (event) => {
     event.preventDefault() // prevents rerendering
@@ -41,16 +43,27 @@ const App = () => {
     const personNames = persons.map(x => x.name)
 
     // check for duplicate names
-    personNames.includes(newName) 
-    ? alert(`${newName} already exists!`) 
-    : phoneService
+    if (personNames.includes(newName)) {
+      if(window.confirm("Are you sure you want to change this contact's number?")) {
+        const person = persons.find(p => p.name === newName)
+        const id = person.id
+        const changedNum = { ...person, number: newNumber }
+
+        phoneService
+        .update(id, changedNum)
+        .then(response => {
+          setPersons(persons.map(person => person.id !== id ? person : response.data)) 
+        })
+      }
+    } else {
+      phoneService
         .create(phoneObject)
         .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
-      })
-
+        })
+      }
   }
 
   // filters objects down to specified names

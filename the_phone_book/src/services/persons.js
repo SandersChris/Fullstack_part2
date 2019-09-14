@@ -5,7 +5,9 @@ const getAll = () => axios.get(baseUrl)
 
 const create = newObject => axios.post(baseUrl, newObject)
 
-const remove = (id) => axios.delete(`http://localhost:3001/persons/${id}`)
+const remove = id => axios.delete(`${baseUrl}/${id}`)
+
+const update = (id, changedNumber) => axios.put(`${baseUrl}/${id}`, changedNumber)
 
 
-export default { getAll, create, remove}
+export default { getAll, create, remove, update}
