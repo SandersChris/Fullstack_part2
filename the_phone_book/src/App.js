@@ -23,8 +23,12 @@ const App = () => {
     .then(response => setPersons(response.data))
   }
 
-  useEffect(hook, [])
-  console.log('render', persons.length, 'persons')
+  const handleClick = (event) => {
+    phoneService
+    .remove(event.target.value)
+  }
+
+  useEffect(hook, [ handleClick ])
   
   const addPerson = (event) => {
     event.preventDefault() // prevents rerendering
@@ -44,9 +48,11 @@ const App = () => {
         .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')
+        setNewNumber('')
       })
 
   }
+
   // filters objects down to specified names
   const nameFilter = () => {
     const name = persons.filter(x => x.name.toLowerCase().includes(newFilter.toLowerCase()))
@@ -64,7 +70,7 @@ const App = () => {
                         handleNumberAdd={handleNumberAdd} 
                         handleNameAdd={handleNameAdd} />
       <Heading heading='Number' />
-        <Persons persons={nameFilter()} numbers={nameFilter()}/>
+        <Persons persons={nameFilter()} numbers={nameFilter()} onClick={handleClick}/>
     </div>
   )
 }
