@@ -4,12 +4,16 @@ import FormComponent from './components/form'
 import Heading from './components/heading'
 import FormFilter from './components/formfilter'
 import phoneService from './services/persons'
+import Notification from './components/error'
+import NotificationAdd from './components/add'
 
 const App = () => {
   const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+  const [ newAdd, setNewAdd ] = useState(null)
+  const [ newError, setNewError ] = useState(null)
 
   const handleNameAdd = (event) => setNewName(event.target.value)
 
@@ -27,6 +31,12 @@ const App = () => {
     if (window.confirm("Are you sure you want to delete this contact?")) {
     phoneService
     .remove(event.target.value)
+    .catch(error => {
+      setNewError('Contact has already been removed.')
+      setTimeout(() => {
+        setNewError(null)
+      }, 5000)
+    })
     }
   }
 
@@ -54,6 +64,12 @@ const App = () => {
         .then(response => {
           setPersons(persons.map(person => person.id !== id ? person : response.data)) 
         })
+        .catch(error => {
+          setNewError(`${newNumber} has been removed from the server!`)
+          setTimeout(() => {
+            setNewError(null)
+          }, 5000)
+        })
       }
     } else {
       phoneService
@@ -62,7 +78,13 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
+
+        setNewAdd(`${newName} added!`)
+        setTimeout(() => {
+          setNewAdd(null)
+        }, 5000)
         })
+        .catch(error => console.log(error))
       }
   }
 
@@ -77,12 +99,14 @@ const App = () => {
       <Heading heading='PhoneBook' />
         <FormFilter handleFilterAdd={handleFilterAdd} />
       <Heading heading='Add Contact' />
+        <NotificationAdd message={newAdd} />
         <FormComponent  addPerson={addPerson} 
                         newName={newName} 
                         newNumber={newNumber} 
                         handleNumberAdd={handleNumberAdd} 
                         handleNameAdd={handleNameAdd} />
       <Heading heading='Number' />
+        <Notification message={newError} />
         <Persons persons={nameFilter()} numbers={nameFilter()} onClick={handleClick}/>
     </div>
   )
